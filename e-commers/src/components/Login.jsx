@@ -1,5 +1,5 @@
-import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -9,33 +9,38 @@ import {
   Input,
   Heading,
   Text,
-  Spinner,
   useToast,
+  InputGroup,
+  InputRightElement,
+  IconButton,
+  Container,
+  VStack,
+  Checkbox,
+  Divider,
+  useColorModeValue,
 } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Login() {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  // react-hook-form kullanımı
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  // Form gönderildiğinde çağrılan fonksiyon
   const onSubmit = async (data) => {
+    setLoading(true);
     try {
-      setLoading(true);
-
-      // API isteği simülasyonu için 1-2 saniyelik gecikme
+      // Simulate API request delay
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Konsola veri yazıyoruz (gerçekte burada API isteği yaparsınız)
-      console.log("Form verileri:", data);
+      console.log("Form verisi:", data);
 
-      // Başarılı işlem Toast bildirimi
       toast({
         title: "Giriş başarılı.",
         description: "Hoş geldiniz!",
@@ -43,105 +48,129 @@ export default function Login() {
         duration: 4000,
         isClosable: true,
       });
-
-    
-      // const response = await fetch("/api/login", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(data),
-      // });
-      // if (response.ok) {
-      //   // Token kaydet, yönlendir, vs.
-      // } else {
-      //   // Hata mesajı göster
-      // }
-
     } catch (error) {
-      console.error("Login hatası:", error);
+      console.error("Giriş hatası:", error);
+      toast({
+        title: "Hata",
+        description: "Bir şeyler ters gitti.",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box
-      maxW="md"
-      mx="auto"
-      mt={10}
-      p={8}
-      borderWidth={1}
-      borderRadius="lg"
-      boxShadow="md"
-    >
-      <Heading as="h2" size="lg" mb={6} textAlign="center">
-        Giriş Yap
-      </Heading>
+    <Container maxW="lg" p={6} centerContent>
+      <Box
+        w="full"
+        p={10}
+        borderWidth={1}
+        borderRadius="xl"
+        boxShadow="xl"
+        bg={useColorModeValue("white", "gray.800")}
+        borderColor={useColorModeValue("gray.200", "gray.700")}
+      >
+        <VStack spacing={8} align="stretch">
+          <Heading as="h2" size="lg" textAlign="center" color="blue.500">
+            Tekrar Hoş Geldiniz
+          </Heading>
+          <Text textAlign="center" color="gray.500">
+            Hesabınıza giriş yaparak kaldığınız yerden devam edin.
+          </Text>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Kullanıcı Adı veya Email */}
-        <FormControl isInvalid={!!errors.username} mb={4}>
-          <FormLabel>Kullanıcı Adı / Email</FormLabel>
-          <Input
-            type="text"
-            placeholder="Email veya kullanıcı adınızı girin"
-            {...register("username", {
-              required: "Bu alan zorunludur!",
-              minLength: {
-                value: 3,
-                message: "Kullanıcı adı en az 3 karakter olmalı!",
-              },
-            })}
-          />
-          <FormErrorMessage>
-            {errors.username && errors.username.message}
-          </FormErrorMessage>
-        </FormControl>
+          <Divider />
 
-        {/* Parola */}
-        <FormControl isInvalid={!!errors.password} mb={6}>
-          <FormLabel>Parola</FormLabel>
-          <Input
-            type="password"
-            placeholder="Parolanızı girin"
-            {...register("password", {
-              required: "Parola zorunludur!",
-              minLength: {
-                value: 4,
-                message: "Parola en az 4 karakter olmalı!",
-              },
-            })}
-          />
-          <FormErrorMessage>
-            {errors.password && errors.password.message}
-          </FormErrorMessage>
-        </FormControl>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <VStack spacing={5}>
+              <FormControl isInvalid={!!errors.username}>
+                <FormLabel>Kullanıcı Adı veya Email</FormLabel>
+                <Input
+                  type="text"
+                  placeholder="Kullanıcı adınızı veya email adresinizi girin"
+                  {...register("username", {
+                    required: "Bu alan zorunludur.",
+                    minLength: {
+                      value: 3,
+                      message: "Kullanıcı adı en az 3 karakter olmalı.",
+                    },
+                  })}
+                  focusBorderColor="blue.400"
+                />
+                <FormErrorMessage>
+                  {errors.username && errors.username.message}
+                </FormErrorMessage>
+              </FormControl>
 
-        {/* Giriş Butonu */}
-        <Button
-          type="submit"
-          colorScheme="blue"
-          width="full"
-          isDisabled={loading}
-        >
-          {loading ? <Spinner size="sm" /> : "Giriş Yap"}
-        </Button>
-      </form>
+              <FormControl isInvalid={!!errors.password}>
+                <FormLabel>Parola</FormLabel>
+                <InputGroup>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Parolanızı girin"
+                    {...register("password", {
+                      required: "Parola zorunludur.",
+                      minLength: {
+                        value: 4,
+                        message: "Parola en az 4 karakter olmalı.",
+                      },
+                    })}
+                    focusBorderColor="blue.400"
+                  />
+                  <InputRightElement>
+                    <IconButton
+                      aria-label={showPassword ? "Parolayı gizle" : "Parolayı göster"}
+                      icon={showPassword ? <FaEyeSlash /> : <FaEye />}
+                      onClick={() => setShowPassword(!showPassword)}
+                      variant="ghost"
+                      size="sm"
+                      colorScheme="blue"
+                    />
+                  </InputRightElement>
+                </InputGroup>
+                <FormErrorMessage>
+                  {errors.password && errors.password.message}
+                </FormErrorMessage>
+              </FormControl>
 
-      {/* Opsiyonel: Kayıt ol veya şifre unuttum bağlantıları */}
-      <Box mt={4} textAlign="center">
-        <Text fontSize="sm" color="gray.500">
-          Henüz hesabınız yok mu?{" "}
-          <Button variant="link" colorScheme="blue">
-            Kayıt Ol
-          </Button>
-        </Text>
-        <Text fontSize="sm" color="gray.500" mt={1}>
-          Parolanızı mı unuttunuz?{" "}
-          <Button variant="link" colorScheme="blue">
-            Şifre Sıfırla
-          </Button>
-        </Text>
+              <Checkbox {...register("rememberMe")} colorScheme="blue">
+                Beni hatırla
+              </Checkbox>
+
+              <Button
+                type="submit"
+                colorScheme="blue"
+                width="full"
+                isLoading={loading}
+                loadingText="Giriş yapılıyor..."
+                spinnerPlacement="start"
+                isDisabled={loading}
+                _hover={{ bg: "blue.500" }}
+              >
+                Giriş Yap
+              </Button>
+            </VStack>
+          </form>
+
+          <Divider />
+
+          <VStack spacing={3}>
+            <Button variant="link" colorScheme="blue">
+              <Link to="/forgot-password">Parolanızı mı unuttunuz?</Link>
+            </Button>
+            <Text fontSize="sm" color="gray.500">
+              Hesabınız yok mu?{" "}
+              <Link to="/signup">
+                <Button variant="link" colorScheme="blue">
+                  Kayıt Ol
+                </Button>
+              </Link>
+            </Text>
+          </VStack>
+        </VStack>
       </Box>
-    </Box>
+    </Container>
   );
 }

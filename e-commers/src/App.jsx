@@ -1,16 +1,22 @@
+// src/App.js
 
-import './App.css'
-import Login from './components/Login'
+import { Routes, Route } from "react-router-dom";
 
-function App() {
+import Login from './components/Login';
+import Signup from "./components/SignUp";
+import Home from './Home';
 
+export default function App() {
   return (
-    <>
-      <Login/>
-    
-    </>
-  
-  )
-}
+    <Routes>
+      {/* Ana Sayfa */}
+      <Route path="/" element={<Home />} />
 
-export default App
+      {/* Giriş Yap */}
+      <Route path="/login" element={<Login />} />
+
+      {/* Kaydol */}
+      <Route path="/signup" element={<Signup />} />
+    </Routes>
+  );
+}
