@@ -217,7 +217,7 @@ export default function Signup() {
 
                 <GridItem>
                   <FormControl isInvalid={!!errors.email}>
-                    <FormLabel fontSize="sm">Email</FormLabel>
+                    <FormLabel fontSize="sm">Email </FormLabel>
                     <Input
                       type="email"
                       placeholder="ornek@email.com"
