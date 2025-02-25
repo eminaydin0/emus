@@ -1,5 +1,5 @@
 const sequelize = require('../config/database');
-const { DataTypes } = require('sequelize');
+const { } = require("sequelize")
 const bycrypt = require('bcrypt');
 
 module.exports = () => {
